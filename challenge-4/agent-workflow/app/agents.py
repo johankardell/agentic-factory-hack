@@ -407,8 +407,7 @@ async def run_factory_workflow(machine_id: str, telemetry: list):
     fault_agent_id="FaultDiagnosisAgent"
     repair_planner_url = os.getenv("REPAIR_PLANNER_AGENT_URL")
 
-    credential = DefaultAzureCredential()
-    try:
+    async with DefaultAzureCredential() as credential:
         async with AzureAIAgentClient(
             project_endpoint=project_endpoint,
             credential=credential,
@@ -447,5 +446,3 @@ async def run_factory_workflow(machine_id: str, telemetry: list):
             workflow = builder.build()
             result = await workflow.run({"machine_id": machine_id, "telemetry": telemetry})
             return result.get_outputs()
-    finally:
-        await credential.close()

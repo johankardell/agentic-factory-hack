@@ -83,16 +83,15 @@ Always respond in valid JSON format as requested."""
             except Exception as e:
                 print(f"   Warning: Could not restore chat history: {e}")
 
-        credential = DefaultAzureCredential()
+        async with DefaultAzureCredential() as credential:
+            async with OpenAIChatClient(credential=credential).as_agent(
+                name="PartsOrderingAgent",
+                instructions=instructions,
+            ) as agent:
+                result = await agent.run(full_context)
+                response_text = result.text
 
-        async with OpenAIChatClient(credential=credential).as_agent(
-            name="PartsOrderingAgent",
-            instructions=instructions,
-        ) as agent:
-            result = await agent.run(full_context)
-            response_text = result.text
-
-            await self._save_interaction_history(work_order.id, full_context, response_text)
+                await self._save_interaction_history(work_order.id, full_context, response_text)
 
         json_response = self._extract_json(response_text)
         data = json.loads(json_response)
