@@ -71,7 +71,12 @@ Grounding rules (IMPORTANT):
                         project_connection_id="machine-data-connection"
                     ),
 
-                    # TODO: add Foundry IQ MCP tool
+                    MCPTool(
+                        server_label="machine-wiki",
+                        server_url=machine_wiki_mcp_endpoint,
+                        require_approval="never",
+                        project_connection_id="machine-wiki-connection"
+                    )
 
                 ]
 
@@ -93,8 +98,8 @@ Grounding rules (IMPORTANT):
                 input="""
                     Hello, what can the issue be when machine-001 has curing temperature reading of 179.2°C that exceeds warning threshold of 178°C?
                 """,
-                extra_body={"agent": {"name": agent.name,
-                                      "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name,
+                                                "type": "agent_reference"}},
             )
 
             print(f"✅ Agent response: {response.output_text}")
